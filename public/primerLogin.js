@@ -236,9 +236,7 @@ function removeAlert(){
 }
 function createAlert(type, message){
     removeAlert();
-    NAV.insertAdjacentHTML('afterend',`<div id="alertID" class="alert alert-${type} alert-dismissible fade show" role="alert">${message} <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button></div>`);
+    NAV.insertAdjacentHTML('afterend',`<div id="alertID" class="alert alert-${type} alert-dismissible fade show" role="alert">${message} <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`);
 
     
 }

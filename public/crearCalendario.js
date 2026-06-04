@@ -178,7 +178,7 @@ BB.onclick = ev =>{
 
 //Button Filter
 BF.onclick = ev =>{
-    $("#modalFiltros").modal("toggle");
+    bootstrap.Modal.getOrCreateInstance(document.getElementById("modalFiltros")).toggle();
     let profesor = IP.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
     let horas = IH.querySelectorAll('*:checked');
     let dias = ID.querySelectorAll('*:checked');
@@ -412,7 +412,7 @@ function createMateriaCardModel(materia, type){
     <div class="card ${type}" data-info="${materia.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}">
 				<div class="card-header" id="headingOne" >
 					<h5 class="mb-0">
-						<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse${id}" style="text-align: left;"
+						<button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${id}" style="text-align: left;"
 							aria-expanded="true" aria-controls="collapse${id}">
 							<b>${materia.nombre}</b> 
 						</button>
@@ -453,7 +453,7 @@ function createSessionItemModel(sesion){
 }
 
 function createNavBarButtonModel(name,current,url){
-	if(current == true)return `<li class="nav-item active"><a class="nav-link" href="#">${name}<span class="sr-only">(current)</span></a></li>`
+	if(current == true)return `<li class="nav-item active"><a class="nav-link" href="#">${name}<span class="visually-hidden">(current)</span></a></li>`
 	return `<li class="nav-item"><a class="nav-link" href="${url||"#"}">${name}</a></li>`
 }
 
@@ -481,9 +481,7 @@ function removeAlert(){
 
 function createAlert(type, message){
     removeAlert();
-    NAV.insertAdjacentHTML('afterend',`<div id="alertID" class="alert alert-${type} alert-dismissible fade show" role="alert">${message} <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button></div>`);
+    NAV.insertAdjacentHTML('afterend',`<div id="alertID" class="alert alert-${type} alert-dismissible fade show" role="alert">${message} <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`);
 
     
 }
@@ -527,8 +525,8 @@ async function modalUserInfo() {
             <input id="corr" class="form-control mt-3" type="email" name="correo" value="${user.correo}" disabled
             required />
             <div class="modal-footer">
-						<button id="logOffbtn" type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar sesión</button>
-              <button id="btnEditUserInfo" type="submit" class="btn btn-primary" data-dismiss="modal" data-toggle="modal" data-target="#editUserModal">Editar</button>
+						<button id="logOffbtn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar sesión</button>
+              <button id="btnEditUserInfo" type="submit" class="btn btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#editUserModal">Editar</button>
             </div>
           </form>
         </div>
@@ -539,7 +537,7 @@ async function modalUserInfo() {
 	document.getElementById("modalesUsuario").innerHTML = modalHTML;
 	document.getElementById('logOffbtn').addEventListener('click', logOff);
 	document.getElementById("btnEditUserInfo").addEventListener("click", modalEditUserInfo);
-	await $("#userModal").modal("toggle");
+	bootstrap.Modal.getOrCreateInstance(document.getElementById("userModal")).toggle();
 }
 
 function logOff() {
@@ -579,8 +577,8 @@ async function modalEditUserInfo() {
               <input id="passUpdate" class="form-control mt-3" type="password" name="password" value="" id="password" placeholder="Contraseña" required />
               <input id="confpassUpdate" class="form-control mt-3" type="password" name="password" value="" id="confirmpassword" placeholder="Confirmar contraseña" required />
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" data-toggle="modal"data-target="#userModal">Volver</button>
-                <button id="btnConfirmarEdicion" type="submit" class="btn btn-primary" data-dismiss="modal">Confirmar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="modal"data-bs-target="#userModal">Volver</button>
+                <button id="btnConfirmarEdicion" type="submit" class="btn btn-primary" data-bs-dismiss="modal">Confirmar</button>
               </div>
             </form>
           </div>
@@ -592,7 +590,7 @@ async function modalEditUserInfo() {
 	document
 		.getElementById("btnConfirmarEdicion")
 		.addEventListener("click", verifyPUT);
-	await $("#editUserModal").modal("toggle");
+	bootstrap.Modal.getOrCreateInstance(document.getElementById("editUserModal")).toggle();
 }
 
 async function verifyPUT() {

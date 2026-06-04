@@ -3,34 +3,39 @@ const router = require('express').Router()
 const Alumno = require('../models/Alumno')
 const Val = require('../middlewares/validaciones.js');
 const ValAlumnos = require('../middlewares/validacionesAlumnos.js');
+const { asyncHandler } = require('../middlewares/http');
+const { sanitizeAlumno } = require('../utils/sanitize');
 
 //Ingreso de usuario nuevo
-router.post('/',ValAlumnos.validarAtributosUsuario,ValAlumnos.confirmarPassword,ValAlumnos.encriptarPassword, async (req,res)=>{
+router.post('/',ValAlumnos.validarAtributosUsuario,ValAlumnos.confirmarPassword,ValAlumnos.encriptarPassword, asyncHandler(async (req,res)=>{
     let {nombre,apellido,correo,matricula,password} = req.body;
     let doc = await Alumno.saveAlumno({nombre,apellido,correo,matricula,password});
     if(doc){
-        res.status(201).send(doc);
+        res.status(201).send(sanitizeAlumno(doc));
         return;
     }
     res.status(400).send("Usuario ya registrado");
-}
-)
+}))
 
 
 //Obtener datos de usuario a partir de correo
-router.get('/:email',Val.validarToken, async (req,res)=>{
+router.get('/:email',Val.validarToken, asyncHandler(async (req,res)=>{
     let email = req.correo;
     if(email != req.params.email){
         res.status(403).send('NO');
         return;
     }
     let doc = await Alumno.getAlumnobyEmail(email);
+    if(!doc){
+        res.status(404).send('Usuario no encontrado');
+        return;
+    }
     let { nombre, apellido, correo, matricula,carrera,materia} = doc;
     res.status(200).send(({ nombre, apellido, correo, matricula,carrera,materia}))
-})
+}))
 
 //Actualizar campos de usuario.
-router.put('/',Val.validarToken,ValAlumnos.encriptarPassword, async (req,res)=>{
+router.put('/',Val.validarToken,ValAlumnos.encriptarPassword, asyncHandler(async (req,res)=>{
     //limitar atributos
     let{carrera,nombre,apellido,password} = req.body
     if(carrera){
@@ -39,12 +44,16 @@ router.put('/',Val.validarToken,ValAlumnos.encriptarPassword, async (req,res)=>{
             return;
         }
         let doc = await Alumno.getAlumnobyEmail(req.correo);
+        if(!doc){
+            res.status(404).send('No se encontró el usuario para el update');
+            return;
+        }
         
         //verificar la carrear vacia
         if(!doc.carrera){
             doc = await Alumno.updateAlumno({correo:req.correo},{carrera})
             if(doc){
-                res.status(200).send(doc);
+                res.status(200).send(sanitizeAlumno(doc));
                 return;
             }
             res.status(404).send('No se encontró el usuario para el update');
@@ -74,14 +83,14 @@ router.put('/',Val.validarToken,ValAlumnos.encriptarPassword, async (req,res)=>{
 
     let doc = await Alumno.updateAlumno({correo:req.correo},a);
     if(doc){
-        res.status(200).send(doc);
+        res.status(200).send(sanitizeAlumno(doc));
         return;
     }
     res.status(404).send('No se encontró el usuario para el update');
     return;
 
 
-})
+}))
 
 
 module.exports = router;

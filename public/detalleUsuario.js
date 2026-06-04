@@ -37,8 +37,8 @@ async function modalUserInfo() {
             <input id="corr" class="form-control mt-3" type="email" name="correo" value="${user.correo}" disabled
             required />
             <div class="modal-footer">
-						<button id="logOffbtn" type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar sesión</button>
-              <button id="btnEditUserInfo" type="submit" class="btn btn-primary" data-dismiss="modal" data-toggle="modal" data-target="#editUserModal">Editar</button>
+						<button id="logOffbtn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar sesión</button>
+              <button id="btnEditUserInfo" type="submit" class="btn btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#editUserModal">Editar</button>
             </div>
           </form>
         </div>
@@ -49,7 +49,7 @@ async function modalUserInfo() {
 	document.getElementById("modalesUsuario").innerHTML = modalHTML;
 	document.getElementById('logOffbtn').addEventListener('click', logOff);
 	document.getElementById("btnEditUserInfo").addEventListener("click", modalEditUserInfo);
-	await $("#userModal").modal("toggle");
+	bootstrap.Modal.getOrCreateInstance(document.getElementById("userModal")).toggle();
 }
 
 function logOff() {
@@ -89,8 +89,8 @@ async function modalEditUserInfo() {
               <input id="passUpdate" class="form-control mt-3" type="password" name="password" value="" id="password" placeholder="Contraseña" required />
               <input id="confpassUpdate" class="form-control mt-3" type="password" name="password" value="" id="confirmpassword" placeholder="Confirmar contraseña" required />
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" data-toggle="modal"data-target="#userModal">Volver</button>
-                <button id="btnConfirmarEdicion" type="submit" class="btn btn-primary" data-dismiss="modal">Confirmar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="modal"data-bs-target="#userModal">Volver</button>
+                <button id="btnConfirmarEdicion" type="submit" class="btn btn-primary" data-bs-dismiss="modal">Confirmar</button>
               </div>
             </form>
           </div>
@@ -102,7 +102,7 @@ async function modalEditUserInfo() {
 	document
 		.getElementById("btnConfirmarEdicion")
 		.addEventListener("click", verifyPUT);
-	await $("#editUserModal").modal("toggle");
+	bootstrap.Modal.getOrCreateInstance(document.getElementById("editUserModal")).toggle();
 }
 
 async function verifyPUT() {
@@ -168,7 +168,7 @@ async function materiaCursadaToHTML(materia){
   `<div class="card">
     <div class="card-header" id="headingOne" style="background-color: #c3e6cb;">
       <h5 class="mb-0">
-        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse${t}"
+        <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${t}"
           aria-expanded="true" aria-controls="collapse${t}" style="color: #155724;">
           <b>${materia}</b> 
         </button>
@@ -216,7 +216,7 @@ async function materiaDisponibleToHTML(materia){
   `<div class="card">
     <div class="card-header" id="headingOne">
       <h5 class="mb-0">
-        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse${t}"
+        <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${t}"
           aria-expanded="true" aria-controls="collapse${t}">
           <b>${materia}</b>
         </button>
@@ -264,7 +264,7 @@ async function materiaBloqueadaToHTML(materia){
   `<div class="card">
     <div class="card-header" id="headingOne" style="background-color: #f5c6cb">
       <h5 class="mb-0">
-      <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse${t}"
+      <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${t}"
         aria-expanded="true" aria-controls="collapse${t}" style="color: #721c24;">
           <b>${materia}</b>
         </button>
@@ -304,6 +304,6 @@ function createNavBar(){
 	document.getElementById('navbar').innerHTML = buttons.join('');
 }
 function createNavBarButtonModel(name,current,url){
-	if(current == true)return `<li class="nav-item active"><a class="nav-link" href="#">${name}<span class="sr-only">(current)</span></a></li>`
+	if(current == true)return `<li class="nav-item active"><a class="nav-link" href="#">${name}<span class="visually-hidden">(current)</span></a></li>`
 	return `<li class="nav-item"><a class="nav-link" href="${url||"#"}">${name}</a></li>`
 }

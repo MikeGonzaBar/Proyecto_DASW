@@ -1,17 +1,19 @@
 "use strict";
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const config = require("../db/config");
 const Profesor = require("../models/Profesor");
 const Alumno = require('../models/Alumno.js');
 const  Carrera =  require('../models/Carrera.js')
 const  Clase =  require('../models/Clase.js');
 const Calendario = require("../models/Calendario");
-const sign = "AloHom0r4 y abre te sesamo";
+const sign = config.getJwtSecret();
+const jwtExpiresIn = config.getJwtExpiresIn();
 
 function validarToken(req, res, next) {
 	let token = req.get("x-auth");
 	if (token) {
-		jwt.verify(token, sign, (err, decoded) => {
+		jwt.verify(token, sign, { algorithms: ["HS256"] }, (err, decoded) => {
 			if (err) {
 				console.log(err.name);
 				res.status(401).send({ error: "Token no válido" });
@@ -136,18 +138,24 @@ async function validarCamposClases(req,res,next){
         }
         let falta2 = '';
         let dia = sesion[i];
+        let inicioIngresado = dia.horaInicio !== undefined && dia.horaInicio !== null && dia.horaInicio !== '';
+        let finalIngresado = dia.horaFinal !== undefined && dia.horaFinal !== null && dia.horaFinal !== '';
+        let horaInicio = Number(dia.horaInicio);
+        let horaFinal = Number(dia.horaFinal);
         if(!dia.dia|| dia.dia && dia.dia == ''){
             falta2 += 'falta dia '
         }
-        if(!dia.horaInicio|| dia.horaInicio && (dia.horaInicio  > 22 || dia.horaInicio  < 7)){
-            falta2 += !dia.horaInicio?'falta hora de inicio ':' hora de inicio no valida';
+        if(!inicioIngresado || !Number.isFinite(horaInicio) || horaInicio  > 22 || horaInicio  < 7){
+            falta2 += !inicioIngresado?'falta hora de inicio ':' hora de inicio no valida';
         }
-        if(!dia.horaFinal|| dia.horaFinal && (dia.horaFinal  > 22 || dia.horaFinal  < 7)){
-            falta2 += !dia.horaFinal?'falta hora final ':' hora de final no valida';
+        if(!finalIngresado || !Number.isFinite(horaFinal) || horaFinal  > 22 || horaFinal  < 7){
+            falta2 += !finalIngresado?'falta hora final ':' hora de final no valida';
         }
-        if(dia.horaInicio && dia.horaFinal &&  typeof dia.horaInicio === Number && typeof dia.horaFinal === Number && dia.horaInicio >= dia.horaFinal){
+        if(inicioIngresado && finalIngresado && Number.isFinite(horaInicio) && Number.isFinite(horaFinal) && horaInicio >= horaFinal){
             falta2 += 'La clase no puede empezar despues de terminar.'
         }
+        dia.horaInicio = horaInicio;
+        dia.horaFinal = horaFinal;
         if(falta2.length != 0)falta += `i: ${i} ${falta2}`;
     }
     if(falta.length != 0){
@@ -263,15 +271,15 @@ async function validarCamposCalendario(req,res,next){
 
 async function ajustarEdicionCalendario(req,res,next){
 	let calendario = await Calendario.getCalendarioById(req.params.calendario);
+	if(!calendario){
+		res.status(404).send('Calendario no encontrado');
+		return;
+	}
 	if(calendario.alumno != req.correo){
 		res.status(403).send('No tiene autorización')
 		return;
 	}
 	if(!req.body.nombre || req.body.nombre && req.body.nombre == ''){
-		if(!calendario){
-			res.status(404).send('Calendario no encontrado');
-			return;
-		}
 		req.body.nombre = calendario.nombre;
 	}
 	next();
@@ -327,6 +335,7 @@ function topologicSort(vertex,edgesList){
 module.exports = {
 	validarToken,
 	sign,
+	jwtExpiresIn,
 	validarCamposLogin,
 	validarAdmin,
 	validarCamposMaterias,

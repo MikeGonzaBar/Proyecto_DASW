@@ -103,8 +103,8 @@ async function modalUserInfo() {
             <input id="corr" class="form-control mt-3" type="email" name="correo" value="${user.correo}" disabled
             required />
             <div class="modal-footer">
-						<button id="logOffbtn" type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar sesión</button>
-              <button id="btnEditUserInfo" type="submit" class="btn btn-primary" data-dismiss="modal" data-toggle="modal" data-target="#editUserModal">Editar</button>
+						<button id="logOffbtn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar sesión</button>
+              <button id="btnEditUserInfo" type="submit" class="btn btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#editUserModal">Editar</button>
             </div>
           </form>
         </div>
@@ -117,7 +117,7 @@ async function modalUserInfo() {
 	document
 		.getElementById("btnEditUserInfo")
 		.addEventListener("click", modalEditUserInfo);
-	await $("#userModal").modal("toggle");
+	bootstrap.Modal.getOrCreateInstance(document.getElementById("userModal")).toggle();
 }
 
 function logOff() {
@@ -159,8 +159,8 @@ async function modalEditUserInfo() {
               <input id="passUpdate" class="form-control mt-3" type="password" name="password" value="" id="password" placeholder="Contraseña" required />
               <input id="confpassUpdate" class="form-control mt-3" type="password" name="password" value="" id="confirmpassword" placeholder="Confirmar contraseña" required />
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" data-toggle="modal"data-target="#userModal">Volver</button>
-                <button id="btnConfirmarEdicion" type="submit" class="btn btn-primary" data-dismiss="modal">Confirmar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="modal"data-bs-target="#userModal">Volver</button>
+                <button id="btnConfirmarEdicion" type="submit" class="btn btn-primary" data-bs-dismiss="modal">Confirmar</button>
               </div>
             </form>
           </div>
@@ -172,7 +172,7 @@ async function modalEditUserInfo() {
 	document
 		.getElementById("btnConfirmarEdicion")
 		.addEventListener("click", verifyPUT);
-	await $("#editUserModal").modal("toggle");
+	bootstrap.Modal.getOrCreateInstance(document.getElementById("editUserModal")).toggle();
 }
 
 async function verifyPUT() {
@@ -214,7 +214,7 @@ function createNavBar() {
 }
 function createNavBarButtonModel(name, current, url) {
 	if (current == true)
-		return `<li class="nav-item active"><a class="nav-link" href="#">${name}<span class="sr-only">(current)</span></a></li>`;
+		return `<li class="nav-item active"><a class="nav-link" href="#">${name}<span class="visually-hidden">(current)</span></a></li>`;
 	return `<li class="nav-item"><a class="nav-link" href="${
 		url || "#"
 	}">${name}</a></li>`;
